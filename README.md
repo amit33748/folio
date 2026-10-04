@@ -1,372 +1,270 @@
 <div align="center">
 
-# Folio
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/hero-dark.png">
+  <img src="docs/assets/hero-light.png" alt="Folio: every document, one desk. A self-hosted document workshop with a PDF editor and a phone app." width="100%">
+</picture>
 
-**A self-hosted document workshop: every document tool in one Docker container.**
+<br>
 
-Convert anything to Markdown with [Microsoft MarkItDown](https://github.com/microsoft/markitdown).
-Edit PDF text in its original font. Resize photos to an exact KB size and aspect ratio.
-Compress, convert and secure PDFs, images, audio, video, eBooks and archives.
+[![Docker](https://img.shields.io/badge/docker-compose%20up-1b1915?style=flat-square&logo=docker&logoColor=f6f1e7)](#quick-start)
+[![Python](https://img.shields.io/badge/python-3.12-1b1915?style=flat-square&logo=python&logoColor=f6f1e7)](requirements.txt)
+[![FastAPI](https://img.shields.io/badge/FastAPI-backend-1d6b57?style=flat-square&logo=fastapi&logoColor=f6f1e7)](app/main.py)
+[![MarkItDown](https://img.shields.io/badge/Microsoft-MarkItDown-24489a?style=flat-square)](https://github.com/microsoft/markitdown)
+[![Tools](https://img.shields.io/badge/tools-93-d8401f?style=flat-square)](#the-tool-catalogue)
+[![PWA](https://img.shields.io/badge/mobile-installable%20PWA-b97f0c?style=flat-square)](#on-your-phone)
 
-93 tools · installable mobile app (PWA) · REST API · no files kept
+**[Quick start](#quick-start)** &nbsp;·&nbsp; **[What it does](#what-it-does)** &nbsp;·&nbsp; **[Tools](#the-tool-catalogue)** &nbsp;·&nbsp; **[API](#rest-api)** &nbsp;·&nbsp; **[Phone](#on-your-phone)** &nbsp;·&nbsp; **[Under the hood](#under-the-hood)**
 
 </div>
 
----
+<br>
 
-## Contents
-
-- [Why Folio](#why-folio)
-- [Quick start](#quick-start)
-- [Features](#features)
-- [Tool catalogue](#tool-catalogue)
-- [How it works](#how-it-works)
-- [Configuration](#configuration)
-- [REST API](#rest-api)
-- [Using it on a phone](#using-it-on-a-phone)
-- [Project structure](#project-structure)
-- [Development](#development)
-- [Adding a tool](#adding-a-tool)
-- [Security and privacy](#security-and-privacy)
-- [Limitations](#limitations)
-- [Troubleshooting](#troubleshooting)
-- [Credits and licences](#credits-and-licences)
-
----
-
-## Why Folio
-
-Online converters such as iLovePDF, iLoveIMG, CloudConvert and photo-to-KB resizers are convenient. They also mean
-uploading contracts, IDs and personal photos to someone else's server. Folio brings the same everyday tools onto your
-own machine or server:
-
-- **Private by design.** Files are processed inside the container and deleted as soon as the response is sent.
-- **One place for everything.** PDF, image, media, Office, eBook, archive and font tools behind one interface and one API.
-- **Built for real requirements.** "Under 200 KB", "20–50 KB, 3.5 × 4.5 cm", "9:16 for reels", "fix one typo
-  in this PDF without changing the font".
-- **Works on phones.** It can be installed as an app, scans with the camera, and accepts files from the phone's share sheet.
+Online converters ask you to upload contracts, IDs and family photos to someone else's server. **Folio** puts the
+same everyday tools, and a few they don't have, on a machine you control. Every file is processed inside one
+container and deleted the moment you download the result.
 
 ## Quick start
 
-**Requirements:** Docker with Compose v2, about 5 GB of free disk space for the image, and 2 GB+ of RAM
-(4 GB recommended for OCR, LibreOffice and background removal).
-
 ```bash
 git clone https://github.com/amit33748/folio.git
+```
+
+```bash
 cd folio
-docker compose up -d --build
-```
-
-Then open:
-
-| URL | What |
-|---|---|
-| http://localhost:8080 | Web app |
-| http://localhost:8080/api/docs | Interactive API documentation (OpenAPI) |
-| http://localhost:8080/api/health | Health check |
-
-The first build downloads LibreOffice, Chromium, Tesseract language packs and the background-removal model, so it
-takes a while. Later rebuilds only re-copy the application code.
-
-To stop it, or to update after pulling changes:
-
-```bash
-docker compose down
 ```
 
 ```bash
 docker compose up -d --build
 ```
 
-## Features
+Open **http://localhost:8080**. The API reference is at `/api/docs` and a health check at `/api/health`.
 
-### Markdown, powered by MarkItDown
-- PDF, Word, PowerPoint, Excel, HTML, EPUB, ZIP, JSON, images and audio to clean, LLM-ready Markdown.
-- Web pages and YouTube links to Markdown.
-- Rendered preview, raw view, copy, per-file and combined download.
+> [!NOTE]
+> The first build pulls LibreOffice, Chromium, Tesseract and an ONNX background-removal model. Plan for about
+> 5 GB of disk and 2 to 4 GB of RAM. Rebuilds after code changes take seconds.
 
-### PDF editor that keeps the original font
-- Tap any line of text to change it. The replacement keeps the font, size, colour and baseline of the original.
-- Add text (it picks up the nearest text's font automatically), images, signatures, white-out boxes, highlights and freehand ink.
-- Fill PDF forms, then undo, zoom and save.
+<br>
 
-### Exact sizes and aspect ratios
-- **Compress image to KB:** land between a minimum and maximum (e.g. 20–50 KB). Pixels are reduced before quality
-  is, so the result stays sharp.
-- **Resize image** in px, %, mm, cm or inches with DPI, plus an optional maximum file size.
-- **Crop to aspect ratio:** 1:1, 4:5, 9:16, 16:9, passport or custom W:H. Crop around the face, pad, or pad with a blurred background.
-- **Photo & signature for forms:** passport, visa and exam-portal presets. Head-and-shoulders framing, exact
-  dimensions, KB range, optional AI white background.
-- **Compress PDF to size**, **split PDF by size**, **compress video to a target size** (two-pass), and **reframe video**
-  to 9:16 / 1:1 / 16:9.
+## What it does
 
-### Previews everywhere
-- Every upload is previewed straight away: numbered page thumbnails for PDF, Word, PowerPoint, Excel and eBooks;
-  photos with pixel size and ratio; video with resolution and duration; audio; text; archive contents.
-- Results are previewed too. Single-file PDF and image results get a **before/after slider** with 2× zoom to check quality.
+### Change the words, keep the typeface
 
-### App experience
-- Mobile-first layout with a bottom tab bar, a camera **Scan** button and full-screen tool views.
-- Installable as a PWA, with an offline app shell and Android share-target support.
-- "Continue with…" passes a result straight into the next tool (e.g. Merge → Compress → Protect).
-- Recently used and most-used tools, plus instant search across all tools (press `/`).
+Tap any line in a PDF and retype it. Folio reuses the document's **own embedded font** when it has the glyphs you
+need. Word exports normally carry trimmed subset fonts; Folio rebuilds their Unicode map from the document itself so
+they stay usable. When a glyph truly isn't there, it uses the same family or a metric twin (Calibri → Carlito,
+Arial → Liberation Sans). Size, colour and baseline stay exactly where they were. Add text, sign, white out,
+highlight, draw and fill forms in the same view.
 
-## Tool catalogue
+<img src="docs/assets/shot-editor.png" alt="The PDF editor: the fee line is being retyped in its original CharisSIL 11 pt font, and a hand-drawn signature sits on the signature line." width="100%">
 
-<details open>
-<summary><b>Markdown</b> (4)</summary>
+### Exact sizes for the forms that demand them
 
-| Tool | Description |
+Upload portals ask for things like *"JPG, 20–50 KB, 3.5 × 4.5 cm"* or *"PDF under 200 KB"*. Folio treats those as
+targets, not hopes:
+
+- **Compress image to KB:** set a min and max. Pixels shrink before JPEG quality drops below 50, so results stay sharp instead of blocky.
+- **Photo & signature for forms:** passport, visa and exam presets with head-and-shoulders framing and an optional AI white background.
+- **Resize** in px, %, mm, cm or inches with DPI. **Crop** to any ratio, face-aware, with plain or blurred padding.
+- **Compress PDF to size**, **split PDF by size**, **compress video to a target MB** (two-pass), **reframe video** to 9:16, 1:1 or 16:9.
+
+<img src="docs/assets/shot-kb.png" alt="Compress image to KB: a portrait brought into the 20 to 50 KB range, shown with a before and after comparison." width="100%">
+
+### See it before you keep it
+
+Every upload is previewed the moment it lands: numbered pages for PDF, Word, PowerPoint, Excel and eBooks, pixel
+size and aspect ratio for photos, resolution and duration for video. Results get the same treatment, and single-file
+results open in a **before/after slider** with 2× zoom so you can judge compression quality yourself.
+
+<img src="docs/assets/shot-compress.png" alt="Compress PDF result with a before and after slider over the first page." width="100%">
+
+### A workshop in your pocket
+
+Folio installs as an app. On a phone you get a bottom tab bar, a camera **Scan** button that straightens page edges,
+full-screen tools with a pinned action button, and the system share sheet: send a PDF from any app straight into a
+tool. "Continue with…" carries each result into the next step, so Merge → Compress → Protect is three taps.
+
+<img src="docs/assets/shot-phones.png" alt="Four phone screens: home, merge with page previews, a passport photo result, and the category browser." width="100%">
+
+### Markdown that language models like
+
+Powered by [Microsoft MarkItDown](https://github.com/microsoft/markitdown): PDF, Office, HTML, EPUB, ZIP, JSON,
+images and web pages (YouTube included) become clean, structured Markdown with rendered and raw views.
+
+```bash
+curl -F files=@quarterly-report.pdf http://localhost:8080/api/tools/pdf-to-markdown
+```
+
+```json
+{ "kind": "markdown", "docs": [ { "name": "quarterly-report.md", "markdown": "# Quarterly report\n\nRevenue grew **18%**…" } ] }
+```
+
+<br>
+
+## The tool catalogue
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/ledger-dark.png">
+  <img src="docs/assets/ledger-light.png" alt="93 tools across 10 categories: Markdown 4, Edit and sign 10, Organize PDF 11, Optimize PDF 7, Convert to PDF 11, Convert from PDF 8, PDF security 4, Image 21, Audio and video 10, Docs data and files 7." width="100%">
+</picture>
+
+<details>
+<summary><b>Markdown</b> &nbsp;<sub>4 tools</sub></summary>
+<br>
+
+| Tool | What it does |
 |---|---|
-| Anything to Markdown | PDF, Word, PowerPoint, Excel, HTML, EPUB, ZIP, JSON, images — all to Markdown |
-| PDF to Markdown | Headings, lists and text from PDFs into structured Markdown |
-| Office to Markdown | Word, PowerPoint and Excel, with tables kept |
+| Anything to Markdown | PDF, Word, PowerPoint, Excel, HTML, EPUB, ZIP, JSON, images |
+| PDF to Markdown | Headings, lists and text as structured Markdown |
+| Office to Markdown | Word, PowerPoint and Excel with tables kept |
 | Web page to Markdown | Articles, Wikipedia, YouTube transcripts |
 </details>
 
 <details>
-<summary><b>Edit & sign</b> (10)</summary>
+<summary><b>Edit & sign</b> &nbsp;<sub>10 tools</sub></summary>
+<br>
 
-| Tool | Description |
+| Tool | What it does |
 |---|---|
-| Edit PDF | Change existing text in its original font and size; add text, images and shapes |
+| Edit PDF | Change existing text in its original font; add text, images, shapes |
 | Sign PDF | Draw, type or upload a signature and place it anywhere |
-| Fill PDF form | Text fields, check boxes and drop-downs |
+| Fill PDF form | Text fields, check boxes, drop-downs |
 | Add watermark | Text or logo, any angle and opacity |
-| Add page numbers | Position, format and starting number |
-| Header & footer | `{page}`, `{total}`, `{date}`, `{file}` placeholders |
-| Crop PDF | Trim margins by a fixed amount |
-| Flatten PDF | Burn form fields and annotations into the page |
+| Add page numbers · Header & footer | Position and format; `{page}` `{total}` `{date}` `{file}` placeholders |
+| Crop PDF · Flatten PDF | Trim margins; burn in fields and annotations |
 | Compare PDF | Side-by-side text diff of two versions |
 | Edit metadata | Title, author, subject, keywords |
 </details>
 
 <details>
-<summary><b>Organize PDF</b> (11)</summary>
+<summary><b>Organize PDF</b> &nbsp;<sub>11 tools</sub></summary>
+<br>
 
-| Tool | Description |
+| Tool | What it does |
 |---|---|
-| Merge PDF | Combine files in a chosen order |
-| Split PDF | By ranges, every page, or fixed-size chunks |
-| Split PDF by size | Parts that each stay under an MB limit |
-| Remove pages / Extract pages | Drop or keep selected pages |
-| Reorder pages | Custom order, reverse, odd-then-even |
-| Rotate PDF | 90° / 180° / 270°, all or selected pages |
-| Pages per sheet (N-up) | 2, 4, 6 or 9 pages on a sheet |
-| Alternate & mix | Interleave front and back scans (duplex) |
-| Insert blank pages / Remove blank pages | Add pages, or detect and remove empty ones |
+| Merge PDF | Combine in any order |
+| Split PDF · Split PDF by size | Ranges, every page, fixed chunks, or parts under an MB limit |
+| Remove pages · Extract pages · Reorder pages | Drop, keep, reorder, reverse, odd-then-even |
+| Rotate PDF | 90°, 180°, 270°; all or selected pages |
+| Pages per sheet (N-up) | 2, 4, 6 or 9 per sheet |
+| Alternate & mix | Interleave front and back scans |
+| Insert blank pages · Remove blank pages | Add pages, or detect and drop empty ones |
 </details>
 
 <details>
-<summary><b>Optimize PDF</b> (7)</summary>
+<summary><b>Optimize PDF</b> &nbsp;<sub>7 tools</sub></summary>
+<br>
 
-| Tool | Description |
+| Tool | What it does |
 |---|---|
-| Compress PDF | Light (225 dpi), Recommended (150 dpi), Extreme (100 dpi) |
-| Compress PDF to size | Exact KB/MB target; text stays legible unless strong loss is allowed |
-| Resize PDF pages | A3, A4, A5, B5, Letter, Legal, Tabloid or custom mm; any ratio |
-| Repair PDF | pikepdf → MuPDF → Ghostscript recovery chain |
-| OCR PDF | Searchable text with OCRmyPDF (7 languages) |
-| Grayscale PDF | Remove colour |
-| Fast web view | Linearize with qpdf |
+| Compress PDF | Light 225 dpi, Recommended 150 dpi, Extreme 100 dpi |
+| Compress PDF to size | Exact KB or MB target, legible by default |
+| Resize PDF pages | A3, A4, A5, B5, Letter, Legal, Tabloid or custom mm |
+| Repair PDF | pikepdf, then MuPDF, then Ghostscript recovery |
+| OCR PDF | Searchable text in 7 languages (OCRmyPDF) |
+| Grayscale PDF · Fast web view | Remove colour; linearize with qpdf |
 </details>
 
 <details>
-<summary><b>Convert to PDF</b> (11)</summary>
+<summary><b>Convert to PDF</b> &nbsp;<sub>11 tools</sub></summary>
+<br>
 
-| Tool | Description |
+| Tool | What it does |
 |---|---|
-| Word / PowerPoint / Excel to PDF | LibreOffice rendering |
-| Images to PDF | Fit-to-image, A4 or Letter, margins, orientation |
-| Scan to PDF | Phone camera; edge detection, perspective fix, clean-up, optional OCR |
-| Markdown to PDF · Text to PDF | Typeset A4 documents and monospaced code/logs |
+| Word, PowerPoint, Excel to PDF | LibreOffice rendering |
+| Images to PDF | Fit to image, A4 or Letter, margins, orientation |
+| Scan to PDF | Phone camera, edge detection, perspective fix, optional OCR |
+| Markdown to PDF · Text to PDF | Typeset documents; monospaced code and logs |
 | HTML to PDF · Web page to PDF | Headless Chromium |
 | eBook to PDF | EPUB, MOBI, FB2, CBZ, XPS |
 | PDF to PDF/A | PDF/A-2b for archiving |
 </details>
 
 <details>
-<summary><b>Convert from PDF</b> (8)</summary>
+<summary><b>Convert from PDF</b> &nbsp;<sub>8 tools</sub></summary>
+<br>
 
-| Tool | Description |
+| Tool | What it does |
 |---|---|
-| PDF to Word | **Editable text** (pdf2docx) or **Exact layout** (LibreOffice: shapes and charts kept) |
-| PDF to PowerPoint | One slide per page; page text in the speaker notes |
-| PDF to Excel | Detected tables, one sheet each |
-| PDF to JPG / PNG / WebP | 72–300 dpi |
-| PDF to Text · PDF to HTML · PDF to SVG | Plain text, a self-contained web page, vector pages |
-| Extract images | Embedded pictures at their original resolution |
+| PDF to Word | *Editable text* (pdf2docx) or *Exact layout* (LibreOffice, charts kept) |
+| PDF to PowerPoint · PDF to Excel | Slide per page with notes; detected tables per sheet |
+| PDF to JPG / PNG / WebP | 72 to 300 dpi |
+| PDF to Text · HTML · SVG | Plain text, self-contained page, vector pages |
+| Extract images | Embedded pictures at original resolution |
 </details>
 
 <details>
-<summary><b>PDF security</b> (4)</summary>
+<summary><b>PDF security</b> &nbsp;<sub>4 tools</sub></summary>
+<br>
 
-| Tool | Description |
+| Tool | What it does |
 |---|---|
 | Protect PDF | AES-256 with print, copy and edit restrictions |
 | Unlock PDF | Remove the password from a PDF you own |
-| Redact PDF | True removal of words, emails and phone numbers |
+| Redact PDF | Removes the text itself, plus emails and phone numbers |
 | Remove metadata | Author, XMP, JavaScript, embedded files |
 </details>
 
 <details>
-<summary><b>Image</b> (21)</summary>
+<summary><b>Image</b> &nbsp;<sub>21 tools</sub></summary>
+<br>
 
-| Tool | Description |
+| Tool | What it does |
 |---|---|
-| Compress image | Quality slider, optional max dimension; PNG via pngquant |
-| Compress image to KB | Min/max KB range with quick presets |
-| Resize image | px, %, mm, cm, inch + DPI; fill, fit or stretch; optional max KB |
-| Crop to aspect ratio | Face-aware crop, pad or blurred pad |
-| Photo & signature for forms | Passport 35×45 mm, US 2×2 in, visa, Canada, exam photo/signature presets, custom |
+| Compress image · Compress image to KB | Quality slider; min/max KB range with quick presets |
+| Resize image · Crop to aspect ratio | px, %, mm, cm, inch + DPI; face-aware crop, pad, blurred pad |
+| Photo & signature for forms | Passport 35×45 mm, US 2×2 in, visa, Canada, exam presets, custom |
 | Convert image | HEIC, WebP, AVIF, PNG, JPG, GIF, BMP, TIFF, ICO, PDF |
-| Remove background | AI cut-out (rembg `isnet-general-use`) to transparent or a colour |
+| Remove background | AI cut-out (rembg) to transparent or any colour |
 | Blur faces | Blur, pixelate or black box |
-| Rotate & flip · Adjust & filters | Any angle, mirror; brightness, contrast, saturation, sharpen, sepia… |
-| Watermark image · Meme generator | Text or logo, corner or tiled; top and bottom captions |
-| Enlarge image | 1.5×–4× Lanczos with sharpening |
+| Rotate & flip · Adjust & filters | Any angle; brightness, contrast, saturation, sharpen, sepia |
+| Watermark image · Meme generator | Text or logo, corner or tiled; captions |
+| Enlarge image | 1.5× to 4× Lanczos with sharpening |
 | Remove EXIF & GPS · View file metadata | Lossless strip; full exiftool report |
-| Image to text (OCR) | Document, column, screenshot and single-block layouts |
-| Image to SVG · SVG to PNG / PDF | Vector tracing (vtracer); cairo rendering |
-| Make animated GIF · Photo collage · Web page to image | GIF/WebP animation, grid collage, Chromium screenshot |
+| Image to text (OCR) | Document, columns, screenshot layouts |
+| Image to SVG · SVG to PNG / PDF | vtracer tracing; cairo rendering |
+| Make animated GIF · Photo collage · Web page to image | Animation, grid, Chromium screenshot |
 </details>
 
 <details>
-<summary><b>Audio & video</b> (10)</summary>
+<summary><b>Audio & video</b> &nbsp;<sub>10 tools</sub></summary>
+<br>
 
-| Tool | Description |
+| Tool | What it does |
 |---|---|
 | Convert video | MP4, WebM, MOV, MKV, AVI |
-| Compress video | Quality level, or an exact target size with two-pass encoding |
-| Resize & reframe video | 9:16, 1:1, 4:5, 16:9, 21:9; crop, bars or blurred fill; 360p–4K |
-| Trim audio / video | Frame-accurate or instant copy |
-| Video to GIF · Video to images | Palette-optimised GIF; frames every N seconds |
-| Convert audio · Extract audio | MP3, M4A, WAV, FLAC, OGG, Opus; bitrate, mono, loudness normalisation |
-| Mute video · Change speed | No re-encode; 0.5×–4× with natural pitch |
+| Compress video | Quality level or exact target size (two-pass) |
+| Resize & reframe video | 9:16, 1:1, 4:5, 16:9, 21:9; crop, bars or blurred fill; 360p to 4K |
+| Trim audio / video | Frame-accurate or instant |
+| Video to GIF · Video to images | Optimised palette; frames every N seconds |
+| Convert audio · Extract audio | MP3, M4A, WAV, FLAC, OGG, Opus; bitrate, mono, loudness |
+| Mute video · Change speed | No re-encode; 0.5× to 4× with natural pitch |
 </details>
 
 <details>
-<summary><b>Docs, data & files</b> (7)</summary>
+<summary><b>Docs, data & files</b> &nbsp;<sub>7 tools</sub></summary>
+<br>
 
-| Tool | Description |
+| Tool | What it does |
 |---|---|
-| Convert document | DOCX, DOC, ODT, RTF, Markdown, HTML, EPUB, LaTeX, reStructuredText, TXT, PDF |
-| Convert spreadsheet & data | XLSX, XLS, ODS, CSV, TSV, JSON, XML, HTML table, Markdown table, PDF |
+| Convert document | DOCX, DOC, ODT, RTF, Markdown, HTML, EPUB, LaTeX, RST, TXT, PDF |
+| Convert spreadsheet & data | XLSX, XLS, ODS, CSV, TSV, JSON, XML, HTML, Markdown, PDF |
 | Convert presentation | PPTX, PPT, ODP, PDF, PNG slides |
 | Create archive · Extract / convert archive | ZIP, 7z (optional password), TAR.GZ |
-| Convert font | TTF/OTF ↔ WOFF/WOFF2 |
+| Convert font | TTF, OTF, WOFF, WOFF2 |
 | eBook to Markdown / EPUB | EPUB, FB2, MOBI to Markdown, text, EPUB, Word |
 </details>
 
-## How it works
+<br>
 
-```
-Browser / PWA ──► FastAPI (uvicorn, 2 workers)
-                   ├─ /api/tools/{id}   upload → temp dir → tool handler → file / Markdown JSON → temp dir deleted
-                   ├─ /api/preview      page thumbnails, image/video/archive previews
-                   ├─ /api/editor/*     PDF editor sessions (expire after 3 h)
-                   └─ static app        HTML/CSS/JS, service worker, manifest
-Engines: PyMuPDF · pikepdf/qpdf · Ghostscript · LibreOffice · OCRmyPDF/Tesseract · ffmpeg · pandoc
-         Chromium · cairo · rembg/ONNX · OpenCV · vtracer · pngquant · exiftool · fontTools · py7zr
-```
+## On your phone
 
-### Editing text in the original font
-1. Each span's font, size, colour and baseline are read with `page.get_text("dict")`.
-2. The PDF's own embedded font is reused when it contains every character of the new text. Word-exported PDFs
-   embed trimmed (subset) fonts without a Unicode map; Folio rebuilds that map from the document's own text with
-   fontTools, so the original font stays usable.
-3. If characters are missing, Folio uses the same family installed in the container, or a metric-compatible twin via
-   fontconfig: Calibri → Carlito, Cambria → Caladea, Arial/Helvetica → Liberation Sans/Nimbus Sans,
-   Times → Liberation Serif/Nimbus Roman.
-4. The old glyphs are removed with a tight redaction that leaves images and vector graphics untouched, and the new
-   text is written on the original baseline. When you save, a note tells you which edits kept the original font.
+1. Open Folio in the phone's browser. On Android tap **Install app**; on iOS use **Share → Add to Home Screen**.
+2. Installed on Android, Folio appears in the **share sheet** of every app.
+3. Installing and sharing need **HTTPS** (or `localhost`). Put Folio behind a TLS reverse proxy for phones on your
+   network, for example with Caddy:
 
-### Quality safeguards
-- **Size targets** reduce pixel dimensions before JPEG quality drops below 50, so results stay sharp, not blocky.
-- **PNG compression** uses pngquant with dithering; if quality can't be met, the image stays lossless.
-- **PDF compression** never goes below 100 dpi (72 dpi for size targets) unless "Allow strong quality loss" is ticked.
-  Ghostscript output is page-count checked, so it can never return blank pages.
-- **Input validation:** password-protected or damaged PDFs are rejected with an actionable message; Office, archive
-  and eBook files are checked by their file signature; unreadable files return HTTP 422, not a server error.
-
-## Configuration
-
-Set these in `docker-compose.yml`:
-
-| Setting | Default | Purpose |
-|---|---|---|
-| `ports` | `8080:8000` | Host port for the web app |
-| `MAX_UPLOAD_MB` | `500` | Maximum total upload size per request |
-| `ALLOW_PRIVATE_URLS` | unset | Set to `1` to let the web-page tools fetch intranet/private addresses |
-| `tmpfs /tmp` | `4g` | In-memory scratch space for uploads, results and editor sessions; raise it for very large files |
-
-Previews are limited to files up to 120 MB. Editor sessions are removed 3 hours after their last use.
-
-## REST API
-
-Every tool is available over HTTP. `GET /api/tools` returns each tool's ID, accepted file types and options
-(with defaults). Send files as `files` (repeat the field for several files) and options as form fields.
-
-```bash
-# Anything to Markdown
-curl -F files=@report.pdf http://localhost:8080/api/tools/pdf-to-markdown
-```
-
-```bash
-# PDF under 200 KB
-curl -F files=@big.pdf -F target=200 -F unit=kb http://localhost:8080/api/tools/compress-pdf-to-size -o small.pdf
-```
-
-```bash
-# Photo between 20 and 50 KB
-curl -F files=@me.jpg -F min_size=20 -F max_size=50 -F size_unit=kb http://localhost:8080/api/tools/image-to-size -o me_50kb.jpg
-```
-
-```bash
-# 9:16 reel with blurred fill
-curl -F files=@clip.mov -F aspect=9:16 -F fill=blur -F res=1080 http://localhost:8080/api/tools/resize-video -o reel.mp4
-```
-
-```bash
-# Merge in order
-curl -F files=@a.pdf -F files=@b.pdf http://localhost:8080/api/tools/merge -o merged.pdf
-```
-
-**Responses**
-
-| Result | Format |
-|---|---|
-| A single file | The file, with `Content-Disposition` |
-| Several files | A ZIP |
-| Markdown / text tools | `{"kind": "markdown", "docs": [{"name", "markdown", "title"}]}` |
-| Compare PDF | `{"kind": "html", "html": "…"}` |
-| Errors | `422 {"error": "…"}` for bad input; `500` for unexpected failures |
-
-Useful response headers: `X-Original-Size`, `X-Result-Size`, `X-Folio-Note` (URL-encoded explanation) and
-`X-Folio-Target-Met` (`1`/`0` for size targets).
-
-**Editor API**
-
-| Call | Purpose |
-|---|---|
-| `POST /api/editor/open` (`file`, optional `password`) | `{sid, pages: [{w, h, spans, widgets}]}` |
-| `GET /api/editor/{sid}/page/{n}.jpg?w=1200` | Page image |
-| `GET /api/editor/{sid}/font/{xref}` | Embedded font, used for on-screen editing |
-| `POST /api/editor/{sid}/save` | JSON `{"ops": [...]}` with `edit-text`, `add-text`, `image`, `rect`, `highlight`, `line` and `field` operations |
-| `DELETE /api/editor/{sid}` | End the session |
-
-**Preview API:** `POST /api/preview` (`file`, optional `first`, `count`, `width`) returns page or frame thumbnails as data URLs.
-
-## Using it on a phone
-
-- Open the site on the phone. On Android/Chrome tap **Install app**; on iOS use **Share → Add to Home Screen**.
-- Once installed on Android, Folio appears in the system **share sheet**: share a PDF or photo from any app and
-  pick a tool.
-- The **Scan** button opens the camera, straightens the page edges and builds a PDF.
-- Installing the app and the share sheet need HTTPS (or `localhost`). To use Folio from phones on your network,
-  put it behind a TLS reverse proxy such as Caddy, Traefik or nginx. A minimal Caddy example:
-
-```
+```caddyfile
 folio.example.lan {
     reverse_proxy localhost:8080
     request_body {
@@ -375,69 +273,110 @@ folio.example.lan {
 }
 ```
 
-## Project structure
+## REST API
 
-```
-.
-├── Dockerfile              python:3.12-slim-trixie + all engines; bakes in the rembg model
-├── docker-compose.yml      port, upload limit, tmpfs scratch space
-├── requirements.txt
-└── app/
-    ├── main.py             FastAPI app: uploads, validation, responses, static files
-    ├── registry.py         Tool registry, categories, shared helpers (Ghostscript, LibreOffice,
-    │                       size targets, PDF/file validation, SSRF guard, Office media shrinker)
-    ├── tools_pdf.py        Markdown (MarkItDown) and all PDF tools
-    ├── tools_image.py      Image tools: KB targets, ratios, form photos, AI background removal, OCR
-    ├── tools_media.py      Audio and video (ffmpeg)
-    ├── tools_files.py      Documents, spreadsheets, presentations, archives, fonts, eBooks
-    ├── editor.py           PDF editor API (font-preserving edits, forms, signatures)
-    ├── preview.py          Upload/result previews
-    └── static/
-        ├── index.html      App shell (catalogue, workspace, editor, signature pad)
-        ├── styles.css      Design system, responsive/mobile layout, previews
-        ├── app.js          Catalogue, routing, tool workspace, previews, PWA
-        ├── editor.js       PDF editor front end
-        ├── editor.css
-        ├── sw.js           Service worker (offline shell, fonts, share target)
-        ├── manifest.webmanifest
-        └── icons/
-```
-
-The front end is plain HTML, CSS and JavaScript, with no build step. Typography uses Fraunces, Figtree and
-JetBrains Mono from Google Fonts.
-
-## Development
-
-The app runs only inside the container, because it depends on many system engines. A typical loop:
+Every tool is one endpoint. `GET /api/tools` lists IDs, accepted types and options with defaults. Send files as
+`files` (repeat for several) and options as form fields.
 
 ```bash
-docker compose up -d --build
+# a PDF under 200 KB
+curl -F files=@big.pdf -F target=200 -F unit=kb http://localhost:8080/api/tools/compress-pdf-to-size -o small.pdf
 ```
 
 ```bash
-docker logs -f folio
+# a photo between 20 and 50 KB
+curl -F files=@me.jpg -F min_size=20 -F max_size=50 -F size_unit=kb http://localhost:8080/api/tools/image-to-size -o me.jpg
 ```
-
-For faster front-end iteration, mount the static folder by adding this to the `folio` service in `docker-compose.yml`:
-
-```yaml
-    volumes:
-      - ./app/static:/srv/app/static:ro
-```
-
-Run Python inside the container, e.g. to check that all modules import:
 
 ```bash
-docker exec folio python -c "import app.main; print(len(app.main.TOOLS), 'tools')"
+# a 9:16 reel with a blurred fill
+curl -F files=@clip.mov -F aspect=9:16 -F fill=blur -F res=1080 http://localhost:8080/api/tools/resize-video -o reel.mp4
 ```
 
-## Adding a tool
+| You get | When |
+|---|---|
+| The file (`Content-Disposition`) | One result |
+| A ZIP | Several results |
+| `{"kind": "markdown", "docs": [...]}` | Markdown and text tools |
+| `422 {"error": "…"}` | Bad, locked or damaged input, with a message you can show users |
 
-Tools are plain functions registered with the `@tool` decorator. The front end builds the options form from the
-metadata automatically.
+Headers `X-Original-Size`, `X-Result-Size`, `X-Folio-Note` (URL-encoded) and `X-Folio-Target-Met` report what a
+size-target tool achieved.
+
+<details>
+<summary><b>Editor and preview endpoints</b></summary>
+<br>
+
+| Call | Purpose |
+|---|---|
+| `POST /api/editor/open` | `file`, optional `password` → `{sid, pages: [{w, h, spans, widgets}]}` |
+| `GET /api/editor/{sid}/page/{n}.jpg?w=1200` | Page image |
+| `GET /api/editor/{sid}/font/{xref}` | Embedded font, for on-screen editing |
+| `POST /api/editor/{sid}/save` | `{"ops": [...]}`: `edit-text`, `add-text`, `image`, `rect`, `highlight`, `line`, `field` |
+| `DELETE /api/editor/{sid}` | End the session (they also expire after 3 h) |
+| `POST /api/preview` | `file`, optional `first`, `count`, `width` → page or frame thumbnails |
+</details>
+
+## Configuration
+
+| Setting in `docker-compose.yml` | Default | Purpose |
+|---|---|---|
+| `ports` | `8080:8000` | Where the app is served |
+| `MAX_UPLOAD_MB` | `500` | Total upload size per request |
+| `ALLOW_PRIVATE_URLS` | unset | `1` lets the web-page tools reach intranet addresses |
+| `tmpfs /tmp` | `4g` | In-memory scratch for uploads, results and editor sessions |
+
+## Under the hood
+
+```mermaid
+flowchart LR
+    U["Browser or installed app"] -->|upload| API["FastAPI · uvicorn"]
+    API --> V{"Validate<br/>PDF lock, file signature"}
+    V -->|ok| T["Tool handler<br/>in a temp dir"]
+    V -->|bad input| E["422 with a clear message"]
+    T --> ENG["Engines<br/>PyMuPDF · pikepdf · Ghostscript · LibreOffice<br/>OCRmyPDF · ffmpeg · pandoc · Chromium · rembg"]
+    ENG --> R["Result: file, ZIP or Markdown"]
+    R -->|download| U
+    R -.->|temp dir deleted| X(("∅"))
+    U -->|preview| P["/api/preview"]
+    U -->|edit| ED["/api/editor sessions · 3 h"]
+```
+
+**Quality guards that matter in practice**
+
+- Size targets shrink pixels before quality, PNGs go through pngquant with dithering, and PDF compression stays at or
+  above 100 dpi unless you opt in to strong loss.
+- Password-protected or damaged PDFs are refused up front; Ghostscript output is page-count checked, so a "success"
+  can never be a file of blank pages.
+- Office, archive and eBook files are checked by their file signature before any converter sees them.
+
+<details>
+<summary><b>Project structure</b></summary>
+<br>
+
+```
+app/
+├── main.py           FastAPI app: uploads, validation, responses, static files
+├── registry.py       Tool registry, categories and shared helpers
+├── tools_pdf.py      Markdown (MarkItDown) and PDF tools
+├── tools_image.py    Image tools, form photos, background removal, OCR
+├── tools_media.py    Audio and video (ffmpeg)
+├── tools_files.py    Documents, spreadsheets, presentations, archives, fonts, eBooks
+├── editor.py         Font-preserving PDF editor API
+├── preview.py        Upload and result previews
+└── static/           Vanilla HTML/CSS/JS app, editor, service worker, manifest, icons
+docs/assets/          README artwork (rendered from HTML with headless Chromium)
+```
+</details>
+
+<details>
+<summary><b>Adding a tool</b></summary>
+<br>
+
+A tool is a function plus metadata; the interface builds its form automatically.
 
 ```python
-from .registry import PDF, Result, ToolError, out_path, tool, num
+from .registry import PDF, Result, num, out_path, tool
 
 
 @tool(
@@ -460,83 +399,72 @@ def pdf_stamp(files, opts, work):
     return Result("file", out)
 ```
 
-- **Option types:** `text`, `url`, `password`, `textarea`, `number`, `range`, `color`, `checkbox`, `select`,
-  `segmented`, `cards`, `chips`, `grid9` and `file` (a secondary upload, sent as `asset`).
-- **Option keys:** `when: {"other_option": "value"}` shows an option conditionally; `sets` on a select or chips option
-  fills other fields (presets); `half: true` puts two fields on one row.
-- **Errors:** raise `ToolError("message")` for user-facing errors (HTTP 422).
-- **Results:** return `Result("file", path)`, `Result("markdown", docs=[...])`, or add `meta={"note": "…"}` to show
-  a note with the result.
+- **Option types:** `text` `url` `password` `textarea` `number` `range` `color` `checkbox` `select` `segmented`
+  `cards` `chips` `grid9` `file`.
+- **Behaviour:** `when` shows an option conditionally, `sets` turns a select or chips option into presets, and
+  `half: true` pairs fields on one row.
+- **Errors and notes:** raise `ToolError("…")` for a 422 the user can read; `meta={"note": "…"}` adds a note to the result.
+
+To iterate on the front end without rebuilding, mount `./app/static:/srv/app/static:ro` in `docker-compose.yml`.
+</details>
 
 ## Security and privacy
 
-- Uploads and results live in a per-request temp directory on tmpfs and are deleted after the response. Editor
-  sessions expire after 3 hours. Logs contain request lines and, for failures, error tracebacks (which can include
-  file names) — never file contents.
-- The container runs as an unprivileged user (`uid 10001`).
-- URL tools refuse loopback, private, link-local and reserved addresses (SSRF guard) unless `ALLOW_PRIVATE_URLS=1`.
-- Archive extraction rejects path traversal; uploaded file names are sanitised.
-- There is **no built-in authentication**. Do not expose Folio directly to the internet; put it behind a reverse
-  proxy with authentication (basic auth, OAuth proxy or VPN) if anyone outside your network can reach it.
-- Redaction removes the underlying text, not just draws boxes. Always review redacted output before sharing it.
+> [!WARNING]
+> Folio has **no built-in login**. Keep it on a private network, or put it behind a reverse proxy with
+> authentication before anyone outside can reach it.
+
+- **Your files:** they live in a per-request directory on tmpfs and are deleted after the response. Logs record
+  request lines and, for failures, error tracebacks that can include file names; never file contents.
+- **The container:** it runs as an unprivileged user.
+- **URL tools:** they refuse private, loopback and link-local addresses (SSRF guard).
+- **Archives and uploads:** extraction rejects path traversal, and upload file names are sanitised.
+- **Redaction:** it removes the underlying text; still review redacted files before sharing.
 
 ## Limitations
 
-- **Editing text:**
-  - Edited text is written as one run; paragraphs don't reflow.
-  - Complex-script shaping (e.g. Devanagari conjuncts) isn't supported.
-  - Scanned pages need OCR before their text can be edited.
-- **PDF to Word "Editable text"** can drop vector charts; use "Exact layout" for visually faithful output.
-- **Enlarge image** uses classical resampling, not AI super-resolution.
-- **RAR archives** aren't supported (the decoder isn't free software).
-- **MarkItDown extras:**
-  - Audio transcription uses an online speech service.
-  - Image captioning needs an LLM client, which isn't configured.
-- **Third-party assets:** fonts and the Markdown preview library are loaded from Google Fonts and cdnjs (cached by the
-  service worker after the first visit).
-- **Image size:** about 4.6 GB, mostly LibreOffice, Chromium and the ONNX model.
+- **Editing text:** each edit is written as one run, so paragraphs don't reflow, and complex scripts such as
+  Devanagari conjuncts aren't shaped. Scans need OCR before their text can be edited.
+- **PDF to Word:** *Editable text* can drop vector charts; use *Exact layout* when looks matter.
+- **Enlarge image:** classical resampling, not AI super-resolution.
+- **RAR archives:** not supported, because the decoder isn't free software.
+- **MarkItDown extras:** audio transcription calls an online speech service, and image captioning needs an LLM,
+  which isn't configured.
+- **Image size:** about 4.6 GB.
 
 ## Troubleshooting
 
-| Symptom | Fix |
+| You see | Do this |
 |---|---|
-| `failed to connect to the docker API` | Start Docker Desktop / the Docker daemon |
-| Upload fails on large files | Raise `MAX_UPLOAD_MB` and the `tmpfs` size; check reverse-proxy body limits |
-| "…is password protected" | Run **Unlock PDF** first, or enter the password in the editor |
-| "…isn't a readable PDF" | Try **Repair PDF** |
-| Size target "not met" note | The target is below what the content allows at legible quality; tick "Allow strong quality loss" or raise the target |
-| First background removal is slow | The model warms up in the background after start; later requests take ~1–3 s |
-| App doesn't offer to install | Needs HTTPS or `localhost`; see [Using it on a phone](#using-it-on-a-phone) |
-| Old UI after an update | Hard-reload once; the service worker updates its cache automatically |
+| `failed to connect to the docker API` | Start Docker Desktop or the Docker daemon |
+| Large uploads fail | Raise `MAX_UPLOAD_MB` and the tmpfs size; check proxy body limits |
+| "…is password protected" | Run **Unlock PDF**, or enter the password in the editor |
+| "…isn't a readable PDF" | Run **Repair PDF** |
+| A size target wasn't met | It's below what stays legible; raise it or allow strong quality loss |
+| No install button on the phone | Serve over HTTPS or `localhost` |
+| Old interface after an update | Reload once; the service worker refreshes itself |
 
 ## Credits and licences
 
-Folio stands on these open-source projects:
+Built on [MarkItDown](https://github.com/microsoft/markitdown) (MIT), [PyMuPDF](https://github.com/pymupdf/PyMuPDF)
+(AGPL-3.0 or commercial), [pikepdf](https://github.com/pikepdf/pikepdf) (MPL-2.0), [Ghostscript](https://www.ghostscript.com/)
+(AGPL-3.0), [qpdf](https://github.com/qpdf/qpdf) (Apache-2.0), [LibreOffice](https://www.libreoffice.org/) (MPL-2.0),
+[OCRmyPDF](https://github.com/ocrmypdf/OCRmyPDF) (MPL-2.0), [Tesseract](https://github.com/tesseract-ocr/tesseract)
+(Apache-2.0), [pdf2docx](https://github.com/ArtifexSoftware/pdf2docx) (AGPL-3.0), [FFmpeg](https://ffmpeg.org/) (LGPL/GPL),
+[pandoc](https://pandoc.org/) (GPL-2.0), [Chromium](https://www.chromium.org/) (BSD), [rembg](https://github.com/danielgatis/rembg)
+(MIT), [OpenCV](https://opencv.org/) (Apache-2.0), [vtracer](https://github.com/visioncortex/vtracer) (MIT),
+[pngquant](https://pngquant.org/) (GPL-3.0), [ExifTool](https://exiftool.org/) (Artistic/GPL),
+[fontTools](https://github.com/fonttools/fonttools) (MIT) and [FastAPI](https://fastapi.tiangolo.com/) (MIT).
+Type: Fraunces, Figtree and JetBrains Mono (SIL OFL).
 
-[MarkItDown](https://github.com/microsoft/markitdown) (MIT) ·
-[PyMuPDF](https://github.com/pymupdf/PyMuPDF) (AGPL-3.0 / commercial) ·
-[pikepdf](https://github.com/pikepdf/pikepdf) (MPL-2.0) ·
-[Ghostscript](https://www.ghostscript.com/) (AGPL-3.0) ·
-[qpdf](https://github.com/qpdf/qpdf) (Apache-2.0) ·
-[LibreOffice](https://www.libreoffice.org/) (MPL-2.0) ·
-[OCRmyPDF](https://github.com/ocrmypdf/OCRmyPDF) (MPL-2.0) ·
-[Tesseract](https://github.com/tesseract-ocr/tesseract) (Apache-2.0) ·
-[pdf2docx](https://github.com/ArtifexSoftware/pdf2docx) (AGPL-3.0) ·
-[FFmpeg](https://ffmpeg.org/) (LGPL/GPL) ·
-[pandoc](https://pandoc.org/) (GPL-2.0) ·
-[Chromium](https://www.chromium.org/) (BSD) ·
-[rembg](https://github.com/danielgatis/rembg) (MIT) ·
-[OpenCV](https://opencv.org/) (Apache-2.0) ·
-[vtracer](https://github.com/visioncortex/vtracer) (MIT) ·
-[pngquant](https://pngquant.org/) (GPL-3.0) ·
-[ExifTool](https://exiftool.org/) (Artistic/GPL) ·
-[fontTools](https://github.com/fonttools/fonttools) (MIT) ·
-[FastAPI](https://fastapi.tiangolo.com/) (MIT).
+> [!IMPORTANT]
+> PyMuPDF, Ghostscript, pdf2docx and pngquant are AGPL or GPL. Private use is unaffected; if you offer Folio as a
+> service to others or redistribute the image, review those obligations or obtain commercial licences.
 
-Several of these components are **AGPL- or GPL-licensed**, including PyMuPDF, Ghostscript, pdf2docx and pngquant.
-Running Folio privately is unaffected. If you offer it as a network service to others or redistribute the image,
-review those licences' obligations, or arrange commercial licences where available.
+Feature research drew on iLovePDF, iLoveIMG, CloudConvert, Convertio,
+[Stirling-PDF](https://github.com/Stirling-Tools/Stirling-PDF) and [BentoPDF](https://github.com/alam00000/bentopdf).
 
-Feature research drew on the tool catalogues of iLovePDF, iLoveIMG, CloudConvert and Convertio, and on the
-open-source [Stirling-PDF](https://github.com/Stirling-Tools/Stirling-PDF) and
-[BentoPDF](https://github.com/alam00000/bentopdf) projects.
+<div align="center">
+<br>
+<sub>Made for people who would rather not upload their passport to a stranger's server.</sub>
+</div>
