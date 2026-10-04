@@ -52,7 +52,7 @@ own machine or server:
 (4 GB recommended for OCR, LibreOffice and background removal).
 
 ```bash
-git clone <your-fork-url> folio
+git clone https://github.com/amit33748/folio.git
 cd folio
 docker compose up -d --build
 ```
