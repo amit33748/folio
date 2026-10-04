@@ -1,0 +1,12 @@
+services:
+  folio:
+    build: .
+    image: folio:latest
+    container_name: folio
+    ports:
+      - "8080:8000"
+    environment:
+      MAX_UPLOAD_MB: "500"
+    tmpfs:
+      - /tmp:size=4g
+    restart: unless-stopped

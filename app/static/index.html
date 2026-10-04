@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Folio — every document tool on one desk</title>
+  <meta name="description" content="Self-hosted document workshop: MarkItDown, PDF editing in the original font, exact-KB image resizing, aspect-ratio crops, audio/video conversion and 90+ more tools.">
+  <meta name="theme-color" content="#f6f1e7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Folio">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,0..100,0..1;1,9..144,300..800,0..100,0..1&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="editor.css">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="masthead">
+    <a class="brand" href="#/" aria-label="Folio home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32"><rect x="5" y="3" width="20" height="26" rx="2"/><path d="M19 3v6h6"/><circle cx="15" cy="19" r="5"/></svg>
+      </span>
+      <span class="brand-word">Folio</span>
+    </a>
+    <nav class="cat-nav" id="catNav" aria-label="Tool categories"></nav>
+    <label class="search" id="searchBox">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+      <input id="search" type="search" placeholder="Search 90+ tools" autocomplete="off" aria-label="Search tools" enterkeyhint="go">
+      <kbd>/</kbd>
+    </label>
+    <button class="install-btn" id="installBtn" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m-4.5-4.5L12 15l4.5-4.5M5 20h14"/></svg>
+      <span>Install app</span>
+    </button>
+  </header>
+
+  <main id="home">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow reveal"><span class="reg" aria-hidden="true"></span>Self-hosted document workshop</p>
+        <h1 class="reveal">Every document,<br><em>one desk.</em></h1>
+        <p class="lede reveal">Markdown with Microsoft&nbsp;MarkItDown. Edit PDF text in its original font. Squeeze photos to an exact KB, crop to any ratio, convert audio, video, eBooks and archives — inside your own container.</p>
+        <div class="hero-actions reveal">
+          <a class="btn btn-ink" href="#/tool/edit-pdf">Edit a PDF <span aria-hidden="true">→</span></a>
+          <a class="btn btn-ghost" href="#/tool/image-to-size">Resize photo to KB</a>
+        </div>
+        <dl class="hero-stats reveal" id="heroStats"></dl>
+      </div>
+
+      <div class="press" aria-hidden="true">
+        <div class="press-sheet sheet-pdf">
+          <span class="sheet-tag">report.pdf</span>
+          <i style="--w:72%"></i><i style="--w:94%"></i><i style="--w:88%"></i><i style="--w:40%"></i>
+          <div class="sheet-fig"></div>
+          <i style="--w:91%"></i><i style="--w:84%"></i><i style="--w:60%"></i>
+        </div>
+        <div class="press-sheet sheet-md">
+          <span class="sheet-tag tag-md">report.md</span>
+          <pre><span class="m-h"># Quarterly report</span>
+<span class="m-p">Revenue grew **18%** on</span>
+<span class="m-p">the back of …</span>
+
+<span class="m-h">## Highlights</span>
+<span class="m-l">- New markets: 3</span>
+<span class="m-l">- Churn: 2.1%</span>
+
+<span class="m-t">| Q | Rev  |</span>
+<span class="m-t">|---|------|</span>
+<span class="m-t">| 3 | 4.2M |</span></pre>
+        </div>
+        <div class="press-seal">
+          <svg viewBox="0 0 120 120">
+            <defs><path id="ring" d="M60 60m-44 0a44 44 0 1 1 88 0a44 44 0 1 1-88 0"/></defs>
+            <text><textPath href="#ring" textLength="272" lengthAdjust="spacing">MARKITDOWN · ANY FILE · MARKDOWN ·</textPath></text>
+          </svg>
+          <span class="seal-core"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+        <span class="reg reg-a"></span><span class="reg reg-b"></span>
+      </div>
+    </section>
+
+    <section class="shelf" id="recentShelf" hidden>
+      <header class="shelf-head"><h2>Recently used</h2><button class="link-btn" id="clearRecent" type="button">Clear</button></header>
+      <div class="rail" id="recentRail"></div>
+    </section>
+
+    <section class="shelf" id="popularShelf">
+      <header class="shelf-head"><h2>Most used</h2></header>
+      <div class="rail" id="popularRail"></div>
+    </section>
+
+    <div id="catalog" class="catalog"></div>
+    <p id="noResults" class="no-results" hidden>No tool matches “<span></span>”.</p>
+
+    <footer class="colophon">
+      <p><strong>Folio</strong> runs on <a href="https://github.com/microsoft/markitdown" rel="noopener">MarkItDown</a>, PyMuPDF, pikepdf, Ghostscript, LibreOffice, OCRmyPDF, ffmpeg, pandoc, Chromium and rembg. Nothing is stored; nothing leaves your server.</p>
+      <p><a href="/api/docs">REST API</a></p>
+    </footer>
+  </main>
+
+  <!-- Mobile tab bar -->
+  <nav class="tabbar" aria-label="App">
+    <a href="#/" data-tab="home"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20h-5.5v-6h-5v6H4z"/></svg><span>Home</span></a>
+    <a href="#/browse" data-tab="browse"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg><span>Tools</span></a>
+    <a href="#/tool/scan-to-pdf" class="fab" data-tab="scan" aria-label="Scan document"><svg viewBox="0 0 24 24"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16"/><circle cx="12" cy="12" r="3.2"/></svg></a>
+    <a href="#/tool/edit-pdf" data-tab="edit"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg><span>Edit PDF</span></a>
+    <a href="#/search" data-tab="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>Search</span></a>
+  </nav>
+
+  <!-- Browse sheet (mobile: all categories) -->
+  <div class="browse" id="browse" hidden>
+    <div class="browse-head">
+      <h2>All tools</h2>
+      <button class="icon-btn" data-close-browse aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="browse-grid" id="browseGrid"></div>
+  </div>
+
+  <!-- Tool workspace -->
+  <div class="workspace" id="workspace" hidden role="dialog" aria-modal="true" aria-labelledby="wsTitle">
+    <div class="ws-backdrop" data-close></div>
+    <section class="ws-sheet">
+      <header class="ws-head">
+        <button class="icon-btn" data-close aria-label="Back to all tools">
+          <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <span class="ws-swatch" id="wsSwatch"></span>
+        <div class="ws-titles">
+          <p class="ws-cat" id="wsCat"></p>
+          <h2 id="wsTitle"></h2>
+        </div>
+        <p class="ws-desc" id="wsDesc"></p>
+      </header>
+
+      <div class="ws-body" id="wsBody">
+        <div class="ws-main">
+          <div class="drop" id="drop" tabindex="0" role="button" aria-describedby="dropHint">
+            <input type="file" id="fileInput" hidden>
+            <div class="drop-art" aria-hidden="true">
+              <span class="d-sheet d1"></span><span class="d-sheet d2"></span><span class="d-sheet d3"></span>
+            </div>
+            <div class="drop-text">
+              <p class="drop-title">Drop files here or <u>browse</u></p>
+              <p class="drop-hint" id="dropHint"></p>
+            </div>
+          </div>
+          <div class="pick-row" id="pickRow">
+            <button class="pick" type="button" id="pickFiles"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>Choose files</button>
+            <button class="pick" type="button" id="pickCamera" hidden><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Camera</button>
+            <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden>
+          </div>
+          <ol class="file-list" id="fileList"></ol>
+          <section class="pv" id="pv" hidden aria-live="polite"></section>
+        </div>
+
+        <aside class="ws-side">
+          <form id="optForm" class="opts" novalidate></form>
+          <div class="run-bar">
+            <button class="btn btn-accent btn-run" id="runBtn" type="button" disabled>
+              <span class="run-label"></span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+            <p class="side-note">Processed inside this container. Deleted after download.</p>
+          </div>
+        </aside>
+      </div>
+
+      <div class="ws-progress" id="wsProgress" hidden>
+        <div class="prog-art" aria-hidden="true"><span></span><span></span><span></span></div>
+        <p class="prog-label" id="progLabel">Uploading…</p>
+        <div class="prog-bar"><span id="progBar"></span></div>
+        <button class="link-btn" type="button" id="cancelRun">Cancel</button>
+      </div>
+
+      <div class="ws-result" id="wsResult" hidden></div>
+    </section>
+  </div>
+
+  <!-- PDF editor -->
+  <div class="editor" id="editor" hidden role="dialog" aria-modal="true" aria-label="PDF editor">
+    <header class="ed-top">
+      <button class="icon-btn" id="edClose" aria-label="Close editor"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <div class="ed-title"><p class="ws-cat">Edit &amp; sign</p><h2 id="edName">Edit PDF</h2></div>
+      <div class="ed-zoom">
+        <button class="icon-btn sm" id="zoomOut" aria-label="Zoom out"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></button>
+        <span id="zoomLabel">100%</span>
+        <button class="icon-btn sm" id="zoomIn" aria-label="Zoom in"><svg viewBox="0 0 24 24"><path d="M6 12h12M12 6v12"/></svg></button>
+      </div>
+      <button class="btn btn-accent ed-save" id="edSave" disabled>Save PDF</button>
+    </header>
+
+    <div class="ed-open" id="edOpen">
+      <div class="drop ed-drop" id="edDrop" tabindex="0" role="button">
+        <input type="file" id="edFile" accept="application/pdf,.pdf" hidden>
+        <div class="drop-art" aria-hidden="true"><span class="d-sheet d1"></span><span class="d-sheet d2"></span><span class="d-sheet d3"></span></div>
+        <div class="drop-text">
+          <p class="drop-title">Open a PDF to edit</p>
+          <p class="drop-hint">Tap any text to change it — it keeps its original font, size and colour.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="ed-stage" id="edStage" hidden>
+      <div class="ed-pages" id="edPages"></div>
+    </div>
+
+    <div class="ed-props" id="edProps" hidden></div>
+
+    <nav class="ed-tools" id="edTools" hidden aria-label="Editing tools">
+      <button data-mode="text" class="on"><svg viewBox="0 0 24 24"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg><span>Edit text</span></button>
+      <button data-mode="add"><svg viewBox="0 0 24 24"><path d="M4 7V5h10v2M9 5v12M7 17h4M16 12v8M12 16h8"/></svg><span>Add text</span></button>
+      <button data-mode="sign"><svg viewBox="0 0 24 24"><path d="M3 17c3 0 4-9 6-9s1 8 3 8 2-4 4-4 2 3 5 3"/><path d="M3 21h18"/></svg><span>Sign</span></button>
+      <button data-mode="image"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg><span>Image</span></button>
+      <button data-mode="whiteout"><svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="10" rx="1.5"/><path d="M8 12h8"/></svg><span>Whiteout</span></button>
+      <button data-mode="highlight"><svg viewBox="0 0 24 24"><path d="m14 4 6 6-8 8H6v-6z"/><path d="M4 21h9"/></svg><span>Highlight</span></button>
+      <button data-mode="draw"><svg viewBox="0 0 24 24"><path d="M3 18c4-8 7 3 11-5s5 2 7-1"/></svg><span>Draw</span></button>
+      <button data-act="undo"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span>Undo</span></button>
+    </nav>
+  </div>
+
+  <!-- Signature pad -->
+  <div class="modal" id="sigModal" hidden role="dialog" aria-modal="true" aria-labelledby="sigTitle">
+    <div class="modal-card">
+      <header><h3 id="sigTitle">Your signature</h3>
+        <div class="seg sig-tabs" role="tablist">
+          <label><input type="radio" name="sigmode" value="draw" checked><span>Draw</span></label>
+          <label><input type="radio" name="sigmode" value="type"><span>Type</span></label>
+          <label><input type="radio" name="sigmode" value="upload"><span>Upload</span></label>
+        </div>
+      </header>
+      <div class="sig-pane" data-pane="draw">
+        <canvas id="sigCanvas" width="900" height="300"></canvas>
+        <div class="sig-row">
+          <div class="ink-swatches" id="inkSwatches">
+            <button data-ink="#1b1915" class="on" aria-label="Black ink"></button>
+            <button data-ink="#1f3f9a" aria-label="Blue ink"></button>
+            <button data-ink="#a82e13" aria-label="Red ink"></button>
+          </div>
+          <button class="link-btn" type="button" id="sigClear">Clear</button>
+        </div>
+      </div>
+      <div class="sig-pane" data-pane="type" hidden>
+        <input type="text" id="sigText" placeholder="Type your name" autocomplete="name">
+        <div class="sig-fonts" id="sigFonts">
+          <button data-font="Caveat" class="on">Signature</button>
+          <button data-font="Dancing Script">Signature</button>
+          <button data-font="Fraunces">Signature</button>
+        </div>
+      </div>
+      <div class="sig-pane" data-pane="upload" hidden>
+        <label class="drop sig-drop"><input type="file" id="sigUpload" accept="image/*" hidden><p class="drop-title">Choose an image of your signature</p><p class="drop-hint">White paper backgrounds are removed automatically.</p></label>
+      </div>
+      <footer>
+        <button class="btn btn-ghost" type="button" data-close-modal>Cancel</button>
+        <button class="btn btn-accent" type="button" id="sigUse">Place signature</button>
+      </footer>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js" defer></script>
+  <script src="app.js" defer></script>
+  <script src="editor.js" defer></script>
+</body>
+</html>
